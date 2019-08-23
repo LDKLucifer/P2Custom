@@ -22,6 +22,7 @@ import java.util.HashSet;
 public class ProcessedWEExtent extends AbstractDelegateExtent {
 
     private final HashSet<RegionWrapper> mask;
+    private final String world;
     private final int max;
     int BScount = 0;
     int Ecount = 0;
@@ -33,6 +34,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, int max, Extent child, Extent parent) {
         super(child);
         this.mask = mask;
+        this.world = world;
         if (max == -1) {
             max = Integer.MAX_VALUE;
         }
@@ -114,6 +116,9 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 }
                 break;
             default:
+                int x = location.getBlockX();
+                int y = location.getBlockY();
+                int z = location.getBlockZ();
                 if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
                     if (this.count++ > this.max) {
                         if (this.parent != null) {

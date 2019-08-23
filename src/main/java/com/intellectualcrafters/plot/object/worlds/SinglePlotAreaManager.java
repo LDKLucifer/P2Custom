@@ -23,11 +23,11 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     }
 
     public boolean isWorld(String id) {
-        int mode = 0;
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
             return true;
         }
+        int mode = 0;
         for (int i = 0; i < chars.length; i++) {
             char c = chars[i];
             switch (mode) {
@@ -58,7 +58,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     continue;
             }
         }
-        return true;
+        return mode == 3;
     }
 
     public void setArea(SinglePlotArea area) {
@@ -70,9 +70,12 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     @Override
     public PlotArea getApplicablePlotArea(Location location) {
         PlotArea found = super.getApplicablePlotArea(location);
-        if (found != null) return found;
+        if (found != null)
+            return found;
         String world = location.getWorld();
-        return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ? area : null;
+        return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
+            area :
+            null;
     }
 
     @Override
@@ -86,14 +89,14 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     public PlotArea getPlotArea(String world, String id) {
         PlotArea found = super.getPlotArea(world, id);
         if (found != null) return found;
-        return isWorld(world) || world.equals("*") ? area : null;
+        return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
     @Override
     public PlotArea[] getPlotAreas(String world, RegionWrapper region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) return found;
-        return isWorld(world) || world.equals("*") ? array : noPlotAreas;
+        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
     @Override

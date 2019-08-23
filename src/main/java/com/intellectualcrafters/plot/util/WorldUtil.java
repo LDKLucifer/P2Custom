@@ -39,6 +39,8 @@ public abstract class WorldUtil {
 
     public abstract boolean isWorld(String worldName);
 
+    public abstract String[] getSign(Location location);
+
     public abstract Location getSpawn(String world);
 
     public abstract Location getSpawn(PlotPlayer pp);
@@ -60,6 +62,8 @@ public abstract class WorldUtil {
     public abstract int getHighestBlock(String world, int x, int z);
     
     public abstract boolean addItems(String world, PlotItem item);
+    
+    public abstract void setSign(String world, int x, int y, int z, String[] lines);
     
     public abstract void setBiomes(String world, RegionWrapper region, String biome);
 

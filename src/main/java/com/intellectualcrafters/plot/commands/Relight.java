@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
@@ -10,8 +11,12 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.block.LocalBlockQueue;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+import java.util.HashSet;
 
-@CommandDeclaration(command = "relight", description = "Relight your plot", category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "relight",
+        description = "Relight your plot",
+        usage = "/plot relight",
+        category = CommandCategory.DEBUG)
 public class Relight extends Command {
     public Relight() {
         super(MainCommand.getInstance(), true);
@@ -24,6 +29,7 @@ public class Relight extends Command {
             C.NOT_IN_PLOT.send(player);
             return;
         }
+        HashSet<RegionWrapper> regions = plot.getRegions();
         final LocalBlockQueue queue = plot.getArea().getQueue(false);
         ChunkManager.chunkTask(plot, new RunnableVal<int[]>() {
             @Override

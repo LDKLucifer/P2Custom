@@ -4,11 +4,20 @@ public class PlotVersion {
     public final int year, month, day, hash, build;
 
     public PlotVersion(int year, int month, int day, int hash, int build) {
-        this.year = 0;
-        this.month = 0;
-        this.day = 0;
-        this.hash = 0;
-        this.build = 0;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hash = hash;
+        this.build = build;
+    }
+
+    public static PlotVersion tryParse(String version) {
+        try {
+            return new PlotVersion(version);
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+            return new PlotVersion(0, 0, 0, 0, 0);
+        }
     }
 
     public PlotVersion(String version) {

@@ -230,6 +230,20 @@ public class Config {
     }
 
     /**
+     * Get the field for a specific config node.
+     * @param split the node (split by period)
+     * @param root
+     * @return
+     */
+    private static Field getField(String[] split, Class root) {
+        Object instance = getInstance(split, root);
+        if (instance == null) {
+            return null;
+        }
+        return getField(split, instance);
+    }
+
+    /**
      * Get the field for a specific config node and instance<br>
      *     Note: As expiry can have multiple blocks there will be multiple instances
      * @param split the node (split by period)
@@ -297,7 +311,8 @@ public class Config {
                             clazz = found;
                             split = Arrays.copyOfRange(split, 2, split.length);
                             continue;
-                        } catch (NoSuchFieldException ignore) { }
+                        } catch (NoSuchFieldException ignore) {
+                        }
                         if (found != null) {
                             split = Arrays.copyOfRange(split, 1, split.length);
                             clazz = found;

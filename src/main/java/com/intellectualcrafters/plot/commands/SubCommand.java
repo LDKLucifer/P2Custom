@@ -7,6 +7,11 @@ import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 
+/**
+ * SubCommand class
+ * @see Command(Command, boolean)
+ * @Deprecated In favor of normal Command class
+ */
 public abstract class SubCommand extends Command {
     public SubCommand() {
         super(MainCommand.getInstance(), true);

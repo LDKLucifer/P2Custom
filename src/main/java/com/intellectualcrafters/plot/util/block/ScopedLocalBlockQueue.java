@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
@@ -74,6 +75,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         PlotArea area = PS.get().getPlotArea(getWorld(), null);
         Location loc = new Location(getWorld(), bx, 0, bz);
         if (area != null) {
+            PlotManager manager = area.getPlotManager();
             for (int x = 0; x < 16; x++) {
                 loc.setX(bx + x);
                 for (int z = 0; z < 16; z++) {

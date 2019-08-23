@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -437,6 +438,12 @@ public class ClassicPlotManager extends SquarePlotManager {
                 setWall(plotArea, id, new PlotBlock[]{block});
             }
         }
+        if(Settings.General.MERGE_REPLACE_WALL) {
+            PlotBlock wall = ((ClassicPlotWorld) plotArea).WALL_FILLING;
+            for (PlotId id : plotIds) {
+                setWallFilling(plotArea, id, new PlotBlock[] {wall});
+            }
+        }
         return true;
     }
 
@@ -475,5 +482,16 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public String[] getPlotComponents(PlotArea plotArea, PlotId plotId) {
         return new String[]{"main", "floor", "air", "all", "border", "wall", "outline", "middle"};
+    }
+
+    /**
+     * Remove sign for a plot.
+     */
+    @Override
+    public Location getSignLoc(PlotArea plotArea, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
+        plot = plot.getBasePlot(false);
+        Location bot = plot.getBottomAbs();
+        return new Location(plotArea.worldname, bot.getX() - 1, dpw.ROAD_HEIGHT + 1, bot.getZ() - 2);
     }
 }

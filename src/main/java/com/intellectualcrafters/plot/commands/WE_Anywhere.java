@@ -11,6 +11,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot weanywhere",
         requiredType = RequiredType.NONE,
         category = CommandCategory.ADMINISTRATION)
+@Deprecated
 public class WE_Anywhere extends SubCommand {
 
     @Override

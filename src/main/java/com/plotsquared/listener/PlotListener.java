@@ -87,27 +87,31 @@ public class PlotListener {
                         player.setFlight(flyFlag.get());
                     }
                 }
-                Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get()) {
+
+                Optional<PlotGameMode> guestGamemodeFlag = plot.getFlag(Flags.GUEST_GAMEMODE);
+                if (guestGamemodeFlag.isPresent() && !plot.isAdded(player.getUUID())) {
+                    if (player.getGameMode() != guestGamemodeFlag.get()) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
+                            player.setGameMode(guestGamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(player,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", guestGamemodeFlag.get()));
+                        }
+                    }
+                } else {
+                    Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
+                    if (gamemodeFlag.isPresent()) {
+                        if (player.getGameMode() != gamemodeFlag.get()) {
+                            if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                                player.setGameMode(gamemodeFlag.get());
+                            } else {
+                                MainUtil.sendMessage(player,
+                                        StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
+                            }
                         }
                     }
                 }
-                if (gamemodeFlag.isPresent()) {
-                    if (player.getGameMode() != gamemodeFlag.get() && !plot.isAdded(player.getUUID())) {
-                        if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
-                            player.setGameMode(gamemodeFlag.get());
-                        } else {
-                            MainUtil.sendMessage(player,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
-                        }
-                    }
-                }
+
                 Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
                 if (timeFlag.isPresent()) {
                     try {
@@ -152,22 +156,19 @@ public class PlotListener {
             }
             if (titles) {
                 if (!C.TITLE_ENTERED_PLOT.s().isEmpty() || !C.TITLE_ENTERED_PLOT_SUB.s().isEmpty()) {
-                    TaskManager.runTaskLaterAsync(new Runnable() {
-                        @Override
-                        public void run() {
-                            Plot lastPlot = player.getMeta("lastplot");
-                            if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
-                                Map<String, String> replacements = new HashMap<>();
-                                replacements.put("%x%", String.valueOf(lastPlot.getId().x));
-                                replacements.put("%z%", lastPlot.getId().y + "");
-                                replacements.put("%world%", plot.getArea().toString());
-                                replacements.put("%greeting%", greeting);
-                                replacements.put("%alias", plot.toString());
-                                replacements.put("%s", MainUtil.getName(plot.owner));
-                                String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
-                                String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
-                                AbstractTitle.sendTitle(player, main, sub);
-                            }
+                    TaskManager.runTaskLaterAsync(() -> {
+                        Plot lastPlot = player.getMeta("lastplot");
+                        if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
+                            Map<String, String> replacements = new HashMap<>();
+                            replacements.put("%x%", String.valueOf(lastPlot.getId().x));
+                            replacements.put("%z%", lastPlot.getId().y + "");
+                            replacements.put("%world%", plot.getArea().toString());
+                            replacements.put("%greeting%", greeting);
+                            replacements.put("%alias", plot.toString());
+                            replacements.put("%s", MainUtil.getName(plot.owner));
+                            String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
+                            String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
+                            AbstractTitle.sendTitle(player, main, sub);
                         }
                     }, 20);
                 }
@@ -185,7 +186,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (Flags.DENY_EXIT.isTrue(plot)) {
+            if (Flags.DENY_EXIT.isTrue(plot) && !player.getMeta("kick", false)) {
                 if (previous != null) {
                     player.setMeta("lastplot", previous);
                 }

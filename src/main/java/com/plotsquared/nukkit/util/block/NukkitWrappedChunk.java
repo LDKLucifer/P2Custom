@@ -8,12 +8,11 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.block.ScopedLocalBlockQueue;
 
 public class NukkitWrappedChunk extends ScopedLocalBlockQueue {
-    private final String world;
+    private final String world = "PlotCity";
     private BaseFullChunk chunk;
 
     public NukkitWrappedChunk(String world, BaseFullChunk chunk) {
         super(null, new Location(null, 0, 0, 0), new Location(null, 15, 127, 15));
-        this.world = world;
         init(chunk);
     }
 

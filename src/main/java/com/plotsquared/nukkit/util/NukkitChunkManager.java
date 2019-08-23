@@ -36,6 +36,7 @@ public class NukkitChunkManager extends ChunkManager {
 
     @Override
     public void clearAllEntities(Location pos1, Location pos2) {
+
     }
 
     @Override

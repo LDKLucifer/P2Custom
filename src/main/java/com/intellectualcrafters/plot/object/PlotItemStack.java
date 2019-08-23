@@ -10,6 +10,7 @@ public class PlotItemStack {
     public final String name;
     public final String[] lore;
     
+    @Deprecated
     public PlotItemStack(final int id, final short data, final int amount, final String name, final String... lore) {
         this.id = id;
         this.data = data;

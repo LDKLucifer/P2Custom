@@ -25,7 +25,7 @@ import java.util.List;
         requiredType = RequiredType.NONE,
         description = "Load your plot",
         permission = "plots.load",
-        usage = "/plot restore")
+        usage = "/plot load")
 public class Load extends SubCommand {
 
     @Override
@@ -135,7 +135,7 @@ public class Load extends SubCommand {
         List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {
-                String schematic = schematics.get(i);
+                String schematic = schematics.get(i).split("\\.")[0];
                 String[] split = schematic.split("_");
                 if (split.length < 5) {
                     continue;

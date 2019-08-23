@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -229,6 +230,7 @@ public abstract class HybridUtils {
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(new Runnable() {
+                        private long last = System.currentTimeMillis();
                         @Override
                         public void run() {
                             try {
@@ -408,12 +410,20 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             char[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Math.min(plotWorld.PLOT_HEIGHT, plotWorld.ROAD_HEIGHT);
+                            int minY = plotWorld.SCHEM_Y;
+                            if (!Settings.Schematics.PASTE_ON_TOP) minY = 1;
+                            int maxY = Math.max(extend, blocks.length);
                             if (blocks != null) {
-                                for (int y = 0; y < blocks.length; y++) {
-                                    PlotBlock block = PlotBlock.get(blocks[y]);
-                                    if (block != null) {
-                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                for (int y = 0; y < maxY; y++) {
+                                    if (y > blocks.length - 1) {
+                                        queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, PlotBlock.EVERYTHING);
+                                    } else {
+                                        PlotBlock block = PlotBlock.get(blocks[y]);
+                                        if (block != null) {
+                                            queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        } else {
+                                            queue.setBlock(x + X + plotWorld.ROAD_OFFSET_X, minY + y, z + Z + plotWorld.ROAD_OFFSET_Z, PlotBlock.EVERYTHING);
+                                        }
                                     }
                                 }
                             }

@@ -129,6 +129,11 @@ public class PlotCluster {
             // default pos
             Plot center = getCenterPlot();
             toReturn = center.getHome();
+            if (toReturn.getY() == 0) {
+                PlotManager manager = this.area.getPlotManager();
+                Location loc = manager.getSignLoc(this.area, center);
+                toReturn.setY(loc.getY());
+            }
         } else {
             toReturn = getClusterBottom().add(home.x, home.y, home.z);
         }

@@ -196,6 +196,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
+        final UUID uuid = getUUID();
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
@@ -232,6 +233,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
     }
 
     public int getClusterCount(String world) {
+        UUID uuid = getUUID();
         int count = 0;
         for (PlotArea area : PS.get().getPlotAreas(world)) {
             for (PlotCluster cluster : area.getClusters()) {
@@ -287,6 +289,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     ////////////////////////////////////////////////
 
+    @Deprecated
     public long getPreviousLogin() {
         return getLastPlayed();
     }
@@ -323,6 +326,16 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @param location the target location
      */
     public abstract void teleport(Location location);
+    /**
+     * Kick this player to a location
+     *
+     * @param location the target location
+     */
+    public void plotkick(Location location) {
+        setMeta("kick", true);
+        teleport(location);
+        deleteMeta("kick");
+    }
 
     /**
      * Set this compass target.
@@ -505,7 +518,7 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                     try {
                         PlotPlayer.this.metaMap = value;
                         if (!value.isEmpty()) {
-                            if (Settings.Enabled_Components.PERSISTENT_META) {
+                            if (Settings.Teleport.ON_LOGIN) {
                                 PlotAreaManager manager = PS.get().getPlotAreaManager();
                                 if (manager instanceof SinglePlotAreaManager) {
                                     PlotArea area = ((SinglePlotAreaManager) manager).getArea();
@@ -541,8 +554,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                                                                 @Override
                                                                 public void run() {
                                                                     if (getMeta("teleportOnLogin", true)) {
-                                                                        teleport(loc);
-                                                                        sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        if (plot.isLoaded()) {
+                                                                            teleport(loc);
+                                                                            sendMessage(C.TELEPORTED_TO_PLOT.f() + " (quitLoc-unloaded) (" + plotX + "," + plotZ + ")");
+                                                                        }
                                                                     }
                                                                 }
                                                             });

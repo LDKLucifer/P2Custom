@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.nukkit.util.NukkitUtil;
+
 import java.util.Collections;
 import java.util.UUID;
 
@@ -107,7 +108,8 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void sendMessage(String message) {
-        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
+        if (!StringMan.isEqual(this.<String>getMeta("lastMessage"), message) || (
+            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
             setMeta("lastMessageTime", System.currentTimeMillis());
             this.player.sendMessage(message);
@@ -138,6 +140,7 @@ public class NukkitPlayer extends PlotPlayer {
     
     @Override
     public void setCompassTarget(Location location) {
+        throw new UnsupportedOperationException("Not implemented yet: setCompassTarget");
     }
     
     @Override
@@ -218,6 +221,7 @@ public class NukkitPlayer extends PlotPlayer {
     
     @Override
     public void setTime(long time) {
+        throw new UnsupportedOperationException("Not implemented yet: setTIme");
     }
     
     @Override
@@ -232,6 +236,7 @@ public class NukkitPlayer extends PlotPlayer {
 
     @Override
     public void playMusic(Location location, int id) {
+        throw new UnsupportedOperationException("Not implemented yet: playMusic");
     }
     
     @Override
@@ -240,6 +245,7 @@ public class NukkitPlayer extends PlotPlayer {
     }
 
     @Override public void stopSpectating() {
+        // Do nothing
     }
 
     @Override

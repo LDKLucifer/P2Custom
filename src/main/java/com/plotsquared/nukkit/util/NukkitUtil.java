@@ -3,6 +3,9 @@ package com.plotsquared.nukkit.util;
 import cn.nukkit.OfflinePlayer;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockWallSign;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -18,7 +21,6 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.nukkit.NukkitMain;
 import com.plotsquared.nukkit.object.NukkitPlayer;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class NukkitUtil extends WorldUtil {
@@ -119,6 +121,30 @@ public class NukkitUtil extends WorldUtil {
     }
 
     @Override
+    public void setSign(String worldName, int x, int y, int z, String[] lines) {
+        Level world = getWorld(worldName);
+        BlockWallSign sign = new BlockWallSign(0);
+        Vector3 pos = new Vector3(x, y, z);
+        world.setBlock(pos, sign);
+        BlockEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof BlockEntitySign) {
+            ((BlockEntitySign) tile).setText(lines[0], lines[1], lines[2], lines[3]);
+            tile.scheduleUpdate();
+        }
+    }
+
+    @Override
+    public String[] getSign(Location location) {
+        Level world = getWorld(location.getWorld());
+        Vector3 pos = new Vector3(location.getX(), location.getY(), location.getZ());
+        BlockEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof BlockEntitySign) {
+            return ((BlockEntitySign) tile).getText();
+        }
+        return null;
+    }
+
+    @Override
     public Location getSpawn(PlotPlayer player) {
         return getLocation(((NukkitPlayer) player).player.getSpawn());
     }
@@ -163,10 +189,8 @@ public class NukkitUtil extends WorldUtil {
     @Override
     public String[] getBiomeList() {
         ArrayList<String> biomes = new ArrayList<>();
-        for (Field field : Biome.class.getDeclaredFields()) {
-            if (field.getName().equals(field.getName().toUpperCase())) {
-                biomes.add(field.getName());
-            }
+        for (Biome biome : Biome.biomes) {
+            biomes.add(biome.getName());
         }
         return biomes.toArray(new String[biomes.size()]);
     }
@@ -233,7 +257,7 @@ public class NukkitUtil extends WorldUtil {
     public void setBiomes(String worldName, RegionWrapper region, String biomeString) {
         Level world = getWorld(worldName);
         try {
-            int biome = EnumBiome.getBiome(biomeString.toUpperCase()).getId();
+            int biome = EnumBiome.getBiome(biomeString).getId();
             for (int x = region.minX; x <= region.maxX; x++) {
                 for (int z = region.minZ; z <= region.maxZ; z++) {
                     world.setBiomeId(x, z, (byte) biome);

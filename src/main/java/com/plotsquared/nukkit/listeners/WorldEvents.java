@@ -20,16 +20,19 @@ public class WorldEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldLoad(LevelLoadEvent event) {
+        if (!event.getLevel().getName().equals("PlotCity")) return;
         handle(event.getLevel());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldInit(LevelInitEvent event) {
+        if (!event.getLevel().getName().equals("PlotCity")) return;
         handle(event.getLevel());
     }
 
     private void handle(Level level) {
         String name = level.getName();
+        if (!name.equals("PlotCity")) return;
         try {
             Generator gen = level.getGenerator();
             if (gen instanceof GeneratorWrapper) {

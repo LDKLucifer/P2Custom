@@ -7,7 +7,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <artifactId>PlotSquared</artifactId>
-  <version>3.5.1-CUSTOM</version>
+  <version>3.5.1</version>
   <name>PlotSquared</name>
   <packaging>jar</packaging>
   <build>
@@ -50,13 +50,17 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>
-    <repository>
-      <id>spigot-repo</id>
-      <url>http://hub.spigotmc.org/nexus/content/groups/public/</url>
-    </repository>
     <repository>
       <id>sk80q</id>
       <url>http://maven.sk89q.com/artifactory/repo/</url>
@@ -71,12 +75,6 @@
     </repository>
   </repositories>
   <dependencies>
-    <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.12-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldedit</artifactId>
@@ -96,7 +94,12 @@
       <version>SuomiCraftPE</version>
       <optional>false</optional>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/Nukkit-PM1E.jar</systemPath>
+      <systemPath>${basedir}/lib/server.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>16.0.1</version>
     </dependency>
   </dependencies>
 </project>

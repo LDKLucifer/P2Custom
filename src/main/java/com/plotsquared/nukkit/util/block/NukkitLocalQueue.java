@@ -22,7 +22,9 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     @Override
     public LocalChunk<T> getLocalChunk(int x, int z) {
-        return (LocalChunk<T>) new BasicLocalChunk(this, x, z) {};
+        return (LocalChunk<T>) new BasicLocalChunk(this, x, z) {
+            // Custom stuff?
+        };
     }
 
     @Override
@@ -50,7 +52,7 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
 
     @Override
     public void fixChunkLighting(int x, int z) {
-
+        // Do nothing
     }
 
     @Override
@@ -101,6 +103,7 @@ public class NukkitLocalQueue<T> extends BasicLocalBlockQueue<T> {
         if (lc.biomes != null) {
             int bx = lc.getX() << 4;
             int bz = lc.getX() << 4;
+            String last = null;
             int biome = -1;
             for (int x = 0; x < lc.biomes.length; x++) {
                 String[] biomes2 = lc.biomes[x];

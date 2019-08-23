@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.DoubleFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
@@ -29,6 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -64,9 +66,11 @@ public class MainUtil {
 
     /**
      *
+     * @deprecated
      * @param location
      * @return
      */
+    @Deprecated
     public static PlotId getPlotId(Location location) {
         PlotArea area = location.getPlotArea();
         return area == null ? null : area.getPlotManager().getPlotId(area, location.getX(), location.getY(), location.getZ());
@@ -755,7 +759,13 @@ public class MainUtil {
         } else {
             String prefix = "";
             for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
+                Object value = entry.getValue();
+                if(entry.getKey() instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                    DecimalFormat df = new DecimalFormat("0");
+                    df.setMaximumFractionDigits(340);
+                    value = df.format(value);
+                }
+                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), value));
                 prefix = ", ";
             }
         }

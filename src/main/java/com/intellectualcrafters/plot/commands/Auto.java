@@ -17,7 +17,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 @CommandDeclaration(command = "auto",
@@ -29,6 +29,7 @@ import java.util.Set;
         usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
+    @Deprecated
     public static PlotId getNextPlotId(PlotId id, int step) {
         return id.getNextId(step);
     }
@@ -130,6 +131,9 @@ public class Auto extends SubCommand {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             boolean teleport = i == end.x && j == end.y;
+                            if (plot == null) {
+                                return false;
+                            }
                             plot.claim(player, teleport, null);
                         }
                     }
@@ -181,6 +185,7 @@ public class Auto extends SubCommand {
      * @param start
      * @return
      */
+    @Deprecated
     public static PlotId getNextPlot(PlotId start) {
         int plots;
         PlotId center;

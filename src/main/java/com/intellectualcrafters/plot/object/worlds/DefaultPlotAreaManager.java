@@ -5,13 +5,8 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.area.QuadMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
+import java.util.*;
 
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
@@ -95,7 +90,8 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         localAreas.add(plotArea);
         globalAreas.add(plotArea);
         this.plotAreas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
-        this.plotAreaMap.put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
+        this.plotAreaMap
+            .put(plotArea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
         QuadMap<PlotArea> map = this.plotAreaGrid.get(plotArea.worldname);
         if (map == null) {
             map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
@@ -118,7 +114,8 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
             this.plotAreaMap.remove(area.worldname);
             this.plotAreaGrid.remove(area.worldname);
         } else {
-            this.plotAreaMap.put(area.worldname, globalAreas.toArray(new PlotArea[globalAreas.size()]));
+            this.plotAreaMap
+                .put(area.worldname, globalAreas.toArray(new PlotArea[globalAreas.size()]));
             this.plotAreaGrid.get(area.worldname).remove(area);
         }
     }

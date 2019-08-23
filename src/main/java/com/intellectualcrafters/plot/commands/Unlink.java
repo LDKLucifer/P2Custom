@@ -50,7 +50,7 @@ public class Unlink extends SubCommand {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (!plot.unlinkPlot(createRoad)) {
+                if (!plot.unlinkPlot(createRoad, createRoad)) {
                     MainUtil.sendMessage(player, "&cUnlink has been cancelled");
                     return;
                 }

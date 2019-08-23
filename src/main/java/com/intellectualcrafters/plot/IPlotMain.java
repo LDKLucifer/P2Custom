@@ -5,18 +5,9 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.logger.ILogger;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.block.QueueProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -71,15 +62,24 @@ public interface IPlotMain extends ILogger {
 
     /**
      * Usually PlotSquared
+     *
      * @return
      */
-    String getPluginName();
+    default String getPluginName() {
+        return "PlotSquared";
+    }
 
     /**
      * Get the version of Minecraft that is running.
      * @return
      */
     int[] getServerVersion();
+
+    /**
+     * Get the server implementation string
+     */
+    @NotNull
+    String getServerImplementation();
 
     /**
      * Get the NMS package prefix.

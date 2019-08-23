@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class PlotId {
     /**

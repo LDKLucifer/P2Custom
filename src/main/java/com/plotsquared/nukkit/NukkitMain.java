@@ -35,6 +35,8 @@ import com.plotsquared.nukkit.util.block.NukkitLocalQueue;
 import com.plotsquared.nukkit.uuid.FileUUIDHandler;
 import com.plotsquared.nukkit.uuid.LowerOfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -64,13 +66,20 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         return this.version;
     }
 
+
+    @Override
+    @NotNull
+    public String getServerImplementation() {
+        return this.getServer().getVersion();
+    }
+
     @Override
     public void onEnable() {
         try {
             this.name = getDescription().getName();
             getServer().getName();
             new PS(this, "Nukkit");
-            Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 2);
+            Generator.addGenerator(NukkitHybridGen.class, getPluginName(), 1);
             if (Settings.Enabled_Components.WORLDS) {
                 TaskManager.IMP.taskRepeat(new Runnable() {
                     @Override
@@ -89,6 +98,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         if (manager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
             SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            Map<Integer, Level> worlds = getServer().getLevels();
             Level unload = null;
             for (Level world : getServer().getLevels().values()) {
                 String name = world.getName();
@@ -134,7 +144,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
         if (!Settings.Chat.CONSOLE_COLOR) {
             message = message.replaceAll('\u00A7' + "[0-9]", "");
         }
-        this.getServer().getLogger().info(message);
+        this.getServer().getConsoleSender().sendMessage(message);
     }
 
     @Override
@@ -184,47 +194,43 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void runEntityTask() {
-        TaskManager.runTaskRepeat(new Runnable() {
+        PS.log(C.PREFIX + "KillAllEntities started.");
+        TaskManager.runTaskRepeat(() -> PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
-            public void run() {
-                PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                    @Override
-                    public void run(PlotArea plotArea) {
-                        Level world = getServer().getLevelByName(plotArea.worldname);
-                        try {
-                            if (world == null) {
-                                return;
+            public void run(PlotArea plotArea) {
+                Level world = getServer().getLevelByName("PlotCity");
+                try {
+                    if (world == null) {
+                        return;
+                    }
+                    for (Entity entity : world.getEntities()) {
+                        if (entity instanceof EntityHuman) {
+                            continue;
+                        }
+                        Location location = NukkitUtil.getLocation(entity.getLocation());
+                        Plot plot = location.getPlot();
+                        if (plot == null) {
+                            if (location.isPlotArea() && entity.getLevel().getName().equals("PlotCity")) {
+                                entity.kill();
                             }
-                            Entity[] entities = world.getEntities();
-                            for (Entity entity : entities) {
-                                if (entity instanceof EntityHuman) {
-                                    continue;
-                                }
-                                com.intellectualcrafters.plot.object.Location location = NukkitUtil.getLocation(entity.getLocation());
-                                Plot plot = location.getPlot();
-                                if (plot == null) {
-                                    if (location.isPlotArea()) {
-                                        entity.kill();
-                                    }
-                                    continue;
-                                }
-                                List<MetadataValue> meta = entity.getMetadata("plot");
-                                if (meta.isEmpty()) {
-                                    continue;
-                                }
-                                Plot origin = (Plot) meta.get(0).value();
-                                if (!plot.equals(origin.getBasePlot(false))) {
-                                    entity.kill();
-                                }
-                                continue;
+                            continue;
+                        }
+                        List<MetadataValue> meta = entity.getMetadata("plot");
+                        if (meta.isEmpty()) {
+                            continue;
+                        }
+                        Plot origin = (Plot) meta.get(0).value();
+                        if (!plot.equals(origin.getBasePlot(false))) {
+                            if (entity.getLevel().getName().equals("PlotCity")) {
+                                entity.kill();
                             }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
                         }
                     }
-                });
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
-        }, 20);
+        }), 30);
     }
 
     @Override
@@ -234,14 +240,17 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void registerInventoryEvents() {
+        PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override
     public void registerPlotPlusEvents() {
+        PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override
     public void registerForceFieldEvents() {
+        PS.debug("Not implemented: registerPlotPlusEvents");
     }
 
     @Override
@@ -270,7 +279,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public boolean initPlotMeConverter() {
-        return false;
+        return false; // No PlotMe for MCPE
     }
 
     @Override
@@ -337,6 +346,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
 
     @Override
     public void registerChunkProcessor() {
+        PS.debug("Not implemented: registerChunkProcessor");
     }
 
     @Override
@@ -353,6 +363,7 @@ public final class NukkitMain extends PluginBase implements Listener, IPlotMain 
     public void setGenerator(String worldName) {
         Level world = getServer().getLevelByName(worldName);
         if (world == null) {
+            // create world
             ConfigurationSection worldConfig = PS.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             SetupObject setup = new SetupObject();

@@ -13,25 +13,10 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.plotsquared.nukkit.NukkitMain;
-import com.plotsquared.nukkit.events.ClusterFlagRemoveEvent;
-import com.plotsquared.nukkit.events.PlayerClaimPlotEvent;
-import com.plotsquared.nukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.nukkit.events.PlayerLeavePlotEvent;
-import com.plotsquared.nukkit.events.PlayerPlotDeniedEvent;
-import com.plotsquared.nukkit.events.PlayerPlotHelperEvent;
-import com.plotsquared.nukkit.events.PlayerPlotTrustedEvent;
-import com.plotsquared.nukkit.events.PlayerTeleportToPlotEvent;
-import com.plotsquared.nukkit.events.PlotClearEvent;
-import com.plotsquared.nukkit.events.PlotComponentSetEvent;
-import com.plotsquared.nukkit.events.PlotDeleteEvent;
-import com.plotsquared.nukkit.events.PlotFlagAddEvent;
-import com.plotsquared.nukkit.events.PlotFlagRemoveEvent;
-import com.plotsquared.nukkit.events.PlotMergeEvent;
-import com.plotsquared.nukkit.events.PlotRateEvent;
-import com.plotsquared.nukkit.events.PlotUnlinkEvent;
+import com.plotsquared.nukkit.events.*;
 import com.plotsquared.nukkit.object.NukkitPlayer;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -76,8 +61,8 @@ public class NukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public void callDelete(Plot plot) {
-        callEvent(new PlotDeleteEvent(plot));
+    public boolean callDelete(Plot plot) {
+        return callEvent(new PlotDeleteEvent(plot));
     }
 
     @Override
@@ -91,8 +76,13 @@ public class NukkitEventUtil extends EventUtil {
     }
 
     @Override
-    public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, plots));
+    public boolean callMerge(Plot plot, int dir, int max) {
+        return callEvent(new PlotMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, dir, max));
+    }
+
+    @Override
+    public boolean callAutoMerge(Plot plot, ArrayList<PlotId> plots) {
+        return callEvent(new PlotAutoMergeEvent(NukkitUtil.getWorld(plot.getWorldName()), plot, plots));
     }
 
     @Override
@@ -123,6 +113,11 @@ public class NukkitEventUtil extends EventUtil {
     @Override
     public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
+    }
+
+    @Override
+    public boolean callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner, UUID newOwner, boolean hasOldOwner) {
+        return callEvent(new PlotChangeOwnerEvent(getPlayer(initiator), plot, oldOwner, newOwner, hasOldOwner));
     }
 
     @Override

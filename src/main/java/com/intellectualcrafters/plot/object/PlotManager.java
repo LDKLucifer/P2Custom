@@ -33,6 +33,8 @@ public abstract class PlotManager {
 
     public abstract boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone);
 
+    public abstract Location getSignLoc(PlotArea plotArea, Plot plot);
+
     /*
      * Plot set functions (return false if you do not support the specific set
      * method).

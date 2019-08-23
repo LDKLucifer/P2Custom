@@ -29,8 +29,7 @@ public class WESubscriber {
             WorldEdit.getInstance().getEventBus().unregister(this);
             return;
         }
-        World worldObj = event.getWorld();
-        String world = worldObj.getName();
+        String world = "PlotCity";
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
